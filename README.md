@@ -1,6 +1,8 @@
 # TS Config Plugin
 
-`yarn add ts-config-plugin` and put this in tsconfig:
+Just install the VSIX [packge](https://github.com/octref/ts-config-plugin/releases/tag/v0.1.6).
+
+Or, `yarn add ts-config-plugin` and put this in tsconfig:
 
 ```json
 {
