@@ -1,50 +1,62 @@
 import * as ts_module from 'typescript/lib/tsserverlibrary'
 import * as fs from 'fs'
-import * as path from 'path'
+
+import { LanguageService } from 'typescript/lib/tsserverlibrary'
 import { log } from './log';
 
-import { LanguageService } from 'typescript/lib/tsserverlibrary';
-
 export class WebpackConfig {
-  filename: string = '____webpack.ts'
   private _version: number = 0
-  originalConfigSource: string = ''
 
-  originalOffset: number = -1;
+  filename: string = '____webpack.ts'
+
+  originalConfigSource: string = ''
+  originalPreConfigSource: string = ''
+  originalPostConfigSource: string = ''
+
+  // Position of the opening module.exports = {|
+  originalBlockStart: number = -1
+  // Position of the closing of module.exports = {... |}
+  originalBlockEnd: number = -1
 
   readonly originalStart = `module.exports = {`
 
-  fakeSourceStart = ''
-  readonly fakeSourceEnd = `}`
+  fakeConfigSourceStart = ''
+  readonly fakeConfigSourceEnd = `}`
 
   constructor(absWebpackPath: string) {
-    this.fakeSourceStart = `import * as webpack from '${absWebpackPath}'; let config: webpack.Configuration = {}; module.exports = config = {`
+    this.fakeConfigSourceStart = `import * as webpack from '${absWebpackPath}'; let config: webpack.Configuration = {}; module.exports = config = {`
   }
 
   getVersion() {
     this._version++
     return this._version
   }
-  
+
   updateOriginalConfigSource(original: string) {
-    const start = original.indexOf(this.originalStart) + this.originalStart.length
-    const end = original.lastIndexOf(`}`)
-
-    this.originalOffset = this.fakeSourceStart.length - start
-
-    // log(`start: ${start}`)
-    // log(`end: ${end}`)
-    // log(`original: ${original}`)
-    // log(`original config source: ${original.slice(start, end)}`)
-    this.originalConfigSource = original.slice(start, end)
+    this.originalBlockStart = original.indexOf(this.originalStart) + this.originalStart.length
+    this.originalBlockEnd = original.lastIndexOf(`}`)
+    this.originalConfigSource = original.slice(this.originalBlockStart, this.originalBlockEnd)
+    this.originalPreConfigSource = original.slice(0, this.originalBlockStart - this.originalStart.length)
+    this.originalPostConfigSource = original.slice(this.originalBlockEnd + 1)
   }
 
   getFakeSource() {
-    return this.fakeSourceStart + this.originalConfigSource + this.fakeSourceEnd
+    return (
+      this.originalPreConfigSource +
+      this.fakeConfigSourceStart +
+      this.originalConfigSource +
+      this.fakeConfigSourceEnd +
+      this.originalPostConfigSource
+    )
   }
 
-  getCompletionPosition(pos: number) {
-    return pos + this.originalOffset
+  getOffsetedPosition(pos: number) {
+    return pos - this.originalBlockStart + this.originalPreConfigSource.length + this.fakeConfigSourceStart.length
+  }
+
+  getOriginalPosition(offsetedPosition: number) {
+    const delta = offsetedPosition - this.originalPreConfigSource.length - this.fakeConfigSourceStart.length
+    return this.originalBlockStart + delta
   }
 }
 

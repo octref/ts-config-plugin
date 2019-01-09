@@ -2,7 +2,8 @@ import * as ts_module from 'typescript/lib/tsserverlibrary'
 import * as path from 'path'
 
 import { log } from './log'
-import { WebpackConfig, getLS } from './webpackMask';
+import { WebpackConfig, getLS } from './webpackMask'
+import { WebpackSemanticErrorEmitter } from './semanticDiagnostics'
 
 function init(modules: { typescript: typeof ts_module }) {
   const ts = modules.typescript
@@ -16,10 +17,13 @@ function init(modules: { typescript: typeof ts_module }) {
       }
     }
 
-    const wpFile = new WebpackConfig(path.resolve(__dirname, '../workspaces/webpack/node_modules/@types/webpack'))
-    const miniLS = getLS(wpFile, ts)
+    const WEBPACK_ABS_PATH = path.resolve(__dirname, '../workspaces/webpack/node_modules/@types/webpack')
 
-    log('init')
+    const wpFile = new WebpackConfig(WEBPACK_ABS_PATH)
+    const miniLS = getLS(wpFile, ts)
+    const errorEmitter = new WebpackSemanticErrorEmitter()
+
+    log('init ts-config-plugin')
 
     proxy.getCompletionsAtPosition = (fileName, position, options) => {
       const snapshot = info.languageServiceHost.getScriptSnapshot(fileName)
@@ -27,90 +31,71 @@ function init(modules: { typescript: typeof ts_module }) {
         return undefined
       }
       const content = snapshot.getText(0, snapshot.getLength())
+      wpFile.updateOriginalConfigSource(content)
 
-      const originalStart = `module.exports = {`
-      const blockStart = content.indexOf(originalStart) + originalStart.length
-      const originalEnd = `}`
-      const blockEnd = content.lastIndexOf(originalEnd)
-
-      if (position > blockStart && position < blockEnd) {
-        wpFile.updateOriginalConfigSource(content)
-        log(wpFile.getFakeSource())
-
-        const results = miniLS.getCompletionsAtPosition(
-          wpFile.filename,
-          wpFile.getCompletionPosition(position),
-          options
-        )
-
-        log(results)
+      if (position > wpFile.originalBlockStart && position < wpFile.originalBlockEnd) {
+        const results = miniLS.getCompletionsAtPosition(wpFile.filename, wpFile.getOffsetedPosition(position), options)
 
         return results
       } else {
-        return info.languageService.getCompletionsAtPosition(fileName, position, options);
+        return info.languageService.getCompletionsAtPosition(fileName, position, options)
       }
-
     }
 
-    proxy.getCompletionEntryDetails = (fileName: string, position: number, name: string, formatOptions: ts.FormatCodeOptions | ts.FormatCodeSettings | undefined, source: string | undefined, preferences: ts.UserPreferences | undefined) => {
+    proxy.getCompletionEntryDetails = (fileName: string, position: number, ...args) => {
       const snapshot = info.languageServiceHost.getScriptSnapshot(fileName)
       if (!snapshot) {
         return undefined
       }
-      const content = snapshot.getText(0, snapshot.getLength())
 
-      const originalStart = `module.exports = {`
-      const blockStart = content.indexOf(originalStart) + originalStart.length
-      const originalEnd = `}`
-      const blockEnd = content.lastIndexOf(originalEnd)
-
-      if (position > blockStart && position < blockEnd) {
-        wpFile.updateOriginalConfigSource(content)
-        log(wpFile.getFakeSource())
-
-        const results = miniLS.getCompletionEntryDetails(
-          fileName,
-          position,
-          name,
-          formatOptions,
-          source,
-          preferences
-        )
-
-        log(results)
-
-        return results
+      if (position > wpFile.originalBlockStart && position < wpFile.originalBlockEnd) {
+        return miniLS.getCompletionEntryDetails(fileName, position, ...args)
       } else {
-        return info.languageService.getCompletionEntryDetails(
-          fileName,
-          position,
-          name,
-          formatOptions,
-          source,
-          preferences
-        )
+        return info.languageService.getCompletionEntryDetails(fileName, position, ...args)
       }
     }
 
-    // proxy.getSemanticDiagnostics = (fileName) => {
-    //   // const a = miniLS.getProgram().getSourceFile(wpFile.filename)
-    //   // log(a.fileName)
-    //   // log(a.getText())
-    //   // log(miniLS.getProgram().getSemanticDiagnostics().map(d => d.file))
-    //   // log(miniLS.getProgram().getSourceFiles().map(sf => sf.fileName))
-    //   if (fileName.endsWith('webpack.config.js')) {
-    //     const snapshot = info.languageServiceHost.getScriptSnapshot(fileName)
-    //     if (!snapshot) {
-    //       return []
-    //     }
-    //     const content = snapshot.getText(0, snapshot.getLength())
-    //     wpFile.updateOriginalConfigSource(content)
+    proxy.getSemanticDiagnostics = fileName => {
+      const diagnostics = info.languageService.getSemanticDiagnostics(fileName)
 
-    //     const diags = miniLS.getSemanticDiagnostics(wpFile.filename)
-    //   }
+      if (fileName.endsWith('webpack.config.js')) {
+        const snapshot = info.languageServiceHost.getScriptSnapshot(fileName)
+        if (!snapshot) {
+          return []
+        }
+        const content = snapshot.getText(0, snapshot.getLength())
+        wpFile.updateOriginalConfigSource(content)
 
-    //   return info.languageService.getSemanticDiagnostics(fileName)
-    // }
+        const webpackSemanticDiagnostics = errorEmitter.getWebpackDiagnostics(wpFile.getFakeSource())
+
+        const program = proxy.getProgram()
+        const sourceFile = program.getSourceFile(fileName)
+
+        webpackSemanticDiagnostics.forEach(d => {
+          diagnostics.push({
+            ...d.compilerObject,
+            start: wpFile.getOriginalPosition(d.compilerObject.start),
+            file: sourceFile,
+            source: content
+          })
+        })
+
+        // NONE of these generate any diagnostics
+
+        // const diag = ts.getPreEmitDiagnostics(program, sourceFile)
+        // log(diag)
+        // const diag0 = proxy.getProgram().getSemanticDiagnostics(sourceFile)
+        // log(diag0)
+        // const diags = miniLS.getSemanticDiagnostics(wpFile.filename)
+        // log(diags)
+        // const diags2 = miniLS.getSemanticDiagnostics(wpFile.filename)
+        // log(diags2)
+
+        // return diags
+      }
+
+      return diagnostics
+    }
 
     return proxy
   }
