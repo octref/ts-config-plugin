@@ -1,0 +1,6 @@
+{
+  "devDependencies": {
+    "@types/webpack": "^4.4.22",
+    "webpack": "^4.28.1"
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "name": "ts-config-plugin",
+  "main": "./dist/index.js",
+  "scripts": {
+    "watch": "tsc -w -p ."
+  },
+  "dependencies": {
+    "typescript": "^3.2.2"
+  },
+  "devDependencies": {
+    "@types/node": "^10.12.18"
+  }
+}
