@@ -1949,6 +1949,15 @@ ts-config-plugin@^0.1.0:
     ts-simple-ast "^20.0.0"
     typescript "^3.2.2"
 
+ts-config-plugin@^0.1.1:
+  version "0.1.1"
+  resolved "https://registry.yarnpkg.com/ts-config-plugin/-/ts-config-plugin-0.1.1.tgz#4cd703deb7c218d2d6a8f4df0187f44c79f0641b"
+  integrity sha512-nsslBCEKnRoqloKMUbJEdHA1ku8lACNfz0rFWRyw/QxEmzffNDnMKSXspxkZcyJFj6V8NulO/PDE0PfRICYwlQ==
+  dependencies:
+    ts-config-plugin "^0.1.0"
+    ts-simple-ast "^20.0.0"
+    typescript "^3.2.2"
+
 ts-simple-ast@^20.0.0:
   version "20.0.0"
   resolved "https://registry.yarnpkg.com/ts-simple-ast/-/ts-simple-ast-20.0.0.tgz#2fb4f7edcb589b2da9bc19636f7437c90c7673ae"
