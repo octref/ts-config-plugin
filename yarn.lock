@@ -3399,6 +3399,17 @@ ts-config-plugin@^0.1.2:
     typescript "^3.2.2"
     webpack "^4.28.1"
 
+ts-config-plugin@^0.1.3:
+  version "0.1.3"
+  resolved "https://registry.yarnpkg.com/ts-config-plugin/-/ts-config-plugin-0.1.3.tgz#efd25a2612615d4e2b5d39f828f5d106e4276f19"
+  integrity sha512-drZVICobv1kolzAuS/1dumWl6X9zjxmra+TNhHWLH4S9lAqK3yUIDvxnHb+z4fwrgd778rGOEYZM2iID4TTTug==
+  dependencies:
+    "@types/webpack" "^4.4.22"
+    ts-config-plugin "^0.1.2"
+    ts-simple-ast "^20.0.0"
+    typescript "^3.2.2"
+    webpack "^4.28.1"
+
 ts-simple-ast@^20.0.0:
   version "20.0.0"
   resolved "https://registry.yarnpkg.com/ts-simple-ast/-/ts-simple-ast-20.0.0.tgz#2fb4f7edcb589b2da9bc19636f7437c90c7673ae"
