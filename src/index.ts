@@ -18,6 +18,7 @@ function init(modules: { typescript: typeof ts_module }) {
     }
 
     const WEBPACK_ABS_PATH = path.resolve(__dirname, '../node_modules/@types/webpack')
+    log(WEBPACK_ABS_PATH)
 
     const wpFile = new WebpackConfig(WEBPACK_ABS_PATH)
     const miniLS = getLS(wpFile, ts)
