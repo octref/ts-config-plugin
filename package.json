@@ -1,14 +1,37 @@
 {
   "name": "ts-config-plugin",
+  "version": "0.1.0",
+  "preview": true,
+  "displayName": "TS Config Plugin",
+  "description": "Auto completion / error-checking in webpack.config.js and other JavaSscript based configs",
+  "publisher": "octref",
   "main": "./dist/index.js",
+  "engines": {
+    "vscode": "^1.29.0"
+  },
+  "activationEvents": [
+    "onLanguage:javascript",
+    "onLanguage:javascriptreact"
+  ],
+  "contributes": {
+    "typescriptServerPlugins": [
+      {
+        "name": "ts-config-plugin",
+        "enableForWorkspaceTypeScriptVersions": true
+      }
+    ]
+  },
   "scripts": {
     "watch": "tsc -w -p ."
   },
   "dependencies": {
+    "ts-config-plugin": "^0.1.0",
     "ts-simple-ast": "^20.0.0",
     "typescript": "^3.2.2"
   },
   "devDependencies": {
-    "@types/node": "^10.12.18"
-  }
+    "@types/node": "^10.12.18",
+    "vscode": "^1.1.26"
+  },
+  "license": "MIT"
 }
