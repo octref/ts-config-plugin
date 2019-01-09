@@ -1,6 +1,6 @@
 {
   "name": "vscode-ts-config-plugin",
-  "version": "0.1.4",
+  "version": "0.1.6",
   "repository": {
     "type": "git",
     "url": "git@github.com:octref/ts-config-plugin.git"
@@ -29,6 +29,7 @@
     "watch": "tsc -w -p ."
   },
   "dependencies": {
+    "ts-config-plugin": "^0.1.6"
   },
   "devDependencies": {
     "vscode": "^1.1.26"
