@@ -1,6 +1,6 @@
 {
   "name": "ts-config-plugin",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "repository": {
     "type": "git",
     "url": "git@github.com:octref/ts-config-plugin.git"
