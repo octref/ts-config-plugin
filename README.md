@@ -11,3 +11,7 @@
   }
 }
 ```
+
+## Demo
+
+![demo](./vsc/media/config.gif)
