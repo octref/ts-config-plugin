@@ -11,6 +11,6 @@
     "src"
   ],
   "exclude": [
-    "workspaces"
+    "vsc"
   ]
 }
