@@ -9,13 +9,11 @@
   "displayName": "TS Config Plugin",
   "description": "Auto completion / error-checking in webpack.config.js and other JavaSscript based configs",
   "publisher": "octref",
-  "main": "./dist/index.js",
   "engines": {
     "vscode": "^1.29.0"
   },
   "activationEvents": [
-    "onLanguage:javascript",
-    "onLanguage:javascriptreact"
+    "*"
   ],
   "contributes": {
     "typescriptServerPlugins": [
