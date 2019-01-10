@@ -1,6 +1,6 @@
 # TS Config Plugin
 
-Just install the VSIX [packge](https://github.com/octref/ts-config-plugin/releases/tag/v0.1.6).
+Just install the [VS Code extension](https://marketplace.visualstudio.com/items?itemName=octref.vscode-ts-config-plugin).
 
 Or, `yarn add ts-config-plugin` and put this in tsconfig:
 
