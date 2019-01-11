@@ -28,6 +28,10 @@ function init(modules: { typescript: typeof ts_module }) {
     log('init ts-config-plugin')
 
     proxy.getCompletionsAtPosition = (fileName, position, options) => {
+      if (!fileName.endsWith('webpack.config.js')) {
+        return info.languageService.getCompletionsAtPosition(fileName, position, options)
+      }
+
       const snapshot = info.languageServiceHost.getScriptSnapshot(fileName)
       if (!snapshot) {
         return undefined
@@ -45,6 +49,10 @@ function init(modules: { typescript: typeof ts_module }) {
     }
 
     proxy.getCompletionEntryDetails = (fileName: string, position: number, ...args) => {
+      if (!fileName.endsWith('webpack.config.js')) {
+        return info.languageService.getCompletionEntryDetails(fileName, position, ...args)
+      }
+
       const snapshot = info.languageServiceHost.getScriptSnapshot(fileName)
       if (!snapshot) {
         return undefined
