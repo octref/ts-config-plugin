@@ -24,6 +24,7 @@
     ]
   },
   "scripts": {
+    "compile": "tsc -p .",
     "watch": "tsc -w -p ."
   },
   "dependencies": {
