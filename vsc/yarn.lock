@@ -3371,10 +3371,10 @@ tough-cookie@~2.4.3:
     psl "^1.1.24"
     punycode "^1.4.1"
 
-ts-config-plugin@^0.1.6:
-  version "0.1.6"
-  resolved "https://registry.yarnpkg.com/ts-config-plugin/-/ts-config-plugin-0.1.6.tgz#27a38d46adaa1613cb5d738adf98751cf91408dc"
-  integrity sha512-R6FhrBGwVTZm1pY9jQmesPc4vVkuMOTZND2PHQQKjOen8YzWAH55qNLg1nFltz1ypP9YwKrb1xIGuOge1cw1Xg==
+ts-config-plugin@^0.2.0:
+  version "0.2.0"
+  resolved "https://registry.yarnpkg.com/ts-config-plugin/-/ts-config-plugin-0.2.0.tgz#f0fcf5eb0dc7a1210ee55cf33219887e6faaf0db"
+  integrity sha512-Ng2qB4OSMB1z+iKCgd1URgnpZe6AVpnQUXkbyoA8Qqt1vO9lsIkSZWbVI94G9Bdgq5qbkElBPTR9zXN4OrI7Gw==
   dependencies:
     "@types/webpack" "^4.4.22"
     ts-simple-ast "^20.0.0"
